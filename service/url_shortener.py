@@ -1,7 +1,6 @@
-import random
-import string
 import re
 from enum import Enum
+import hashlib
 
 class InvalidUrlException(Exception): pass
 
@@ -18,7 +17,7 @@ def generate_short_url(
   """Generates a short url or raises InvalidUrlException"""
   if not is_valid_url(url):
     raise InvalidUrlException()
-  random_sequence: str = get_random_alphanumerical(short_id_length)
+  random_sequence: str = hash_url(url, short_id_length)
   return f"{scheme.value}://{domain_name}/{random_sequence}"
 
 def is_valid_url(url: str) -> bool:
@@ -43,10 +42,7 @@ def is_valid_url(url: str) -> bool:
 
     return url_pattern.match(url) != None
 
-def get_random_alphanumerical(length: int) -> str:
-  characters = list(string.ascii_letters) + [str(x) for x in range(0, 10)]
-  alphanumerical_sequence = ''
-  for _ in range(length):
-    r: str = random.choice(characters)
-    alphanumerical_sequence += r
-  return alphanumerical_sequence
+def hash_url(url: str, output_length: int = 8) -> str:
+  hash_bytes: bytes = hashlib.sha256(url.encode()).digest()
+  hex_encoded: str = hash_bytes.hex()[:output_length]
+  return hex_encoded
