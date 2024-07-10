@@ -42,7 +42,7 @@ def is_valid_url(url: str) -> bool:
 
     return url_pattern.match(url) != None
 
-def hash_url(url: str, output_length: int = 8) -> str:
+def hash_url(url: str, output_length: int) -> str:
   hash_bytes: bytes = hashlib.sha256(url.encode()).digest()
   hex_encoded: str = hash_bytes.hex()[:output_length]
   return hex_encoded
