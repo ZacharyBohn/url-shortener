@@ -14,7 +14,21 @@ def generate_short_url(
   scheme: UrlScheme,
   domain_name: str,
   ) -> str:
-  """Generates a short url or raises InvalidUrlException"""
+  """Generates a short url given a real url
+  
+  Args:
+    url: the real URL that a short url will be generated for
+    short_id_length: how long the short url id will be
+    scheme: used to specify either http or https
+    domain_name: the domain name of this service. This is be
+      the domain name of the generated short url
+  
+  Returns:
+    A short url generated using the given url
+  
+  Raises:
+    InvalidUrlException: if the given url is not in a valid format
+  """
   if not is_valid_url(url):
     raise InvalidUrlException()
   random_sequence: str = hash_url(url, short_id_length)
