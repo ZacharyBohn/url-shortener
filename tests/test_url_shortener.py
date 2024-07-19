@@ -12,6 +12,16 @@ class TestUrlShortener(unittest.TestCase):
     self.assertTrue(type(short_url) is str)
     return
   
+  def test_valid_url_with_params_shortener(self):
+    short_url = url_shortener.generate_short_url(
+      'http://domain.com/?name=John&age=30',
+      6,
+      url_shortener.UrlScheme.HTTPS,
+      'myweb.com',
+      )
+    self.assertTrue(type(short_url) is str)
+    return
+  
   def test_invalid_url_shortener(self):
     with self.assertRaises(url_shortener.InvalidUrlException):
       url_shortener.generate_short_url(
