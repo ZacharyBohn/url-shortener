@@ -1,6 +1,7 @@
 import re
 from enum import Enum
 import hashlib
+from pydantic.types import PositiveInt
 
 class InvalidUrlException(Exception): pass
 
@@ -56,7 +57,7 @@ def is_valid_url(url: str) -> bool:
 
     return url_pattern.match(url) != None
 
-def hash_url(url: str, output_length: int) -> str:
+def hash_url(url: str, output_length: PositiveInt) -> str:
   hash_bytes: bytes = hashlib.sha256(url.encode()).digest()
   hex_encoded: str = hash_bytes.hex()[:output_length]
   return hex_encoded
