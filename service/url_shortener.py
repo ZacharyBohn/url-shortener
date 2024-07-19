@@ -30,7 +30,7 @@ def generate_short_url(
     InvalidUrlException: if the given url is not in a valid format
   """
   if not is_valid_url(url):
-    raise InvalidUrlException()
+    raise InvalidUrlException("The provided URL was not valid.")
   random_sequence: str = hash_url(url, short_id_length)
   return f"{scheme.value}://{domain_name}/{random_sequence}"
 
