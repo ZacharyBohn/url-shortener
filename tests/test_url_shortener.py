@@ -57,5 +57,5 @@ class TestUrlShortener(unittest.TestCase):
       'myweb.com',
       )
     
-    self.assertEquals(short_url1, short_url2)
+    self.assertEqual(short_url1, short_url2)
     return
