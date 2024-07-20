@@ -26,12 +26,16 @@ In the project folder run
 
 ### Running the application
 
-You can run the application with
+You can run the application in dev mode with
 
-```python main.py```
+`fastapi dev main.py`
+
+or run it in production mode with
+
+`fastapi run`
 
 ### Tests
 
 You can run all the tests with
 
-```python tests.py```
+`python tests.py`
