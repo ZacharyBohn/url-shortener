@@ -39,3 +39,7 @@ or run it in production mode with
 You can run all the tests with
 
 `python tests.py`
+
+The only outside service needed to run the tests is AWS' dynamoDB.
+
+This service is mocked using moto, so all tests can be run locally.
