@@ -1,15 +1,11 @@
 from fastapi import FastAPI
 
+from api import list_urls
+from api import redirect
+from api import shorten_url
+
 app = FastAPI()
 
-@app.get("/list_urls")
-async def list_urls():
-  return {"message": "ok"}
-  
-@app.get("/redirect")
-async def redirect(short_url: str):
-  return {"message": "ok"}
-  
-@app.post("/shorten_url")
-async def shorten_url(url: str, short_url: str | None):
-  return {"message": "ok"}
+app.include_router(list_urls.router)
+app.include_router(redirect.router)
+app.include_router(shorten_url.router)
