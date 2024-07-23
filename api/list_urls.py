@@ -2,6 +2,6 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.post("/shorten_url")
+@router.post("/list_urls")
 async def shorten_url(url: str, short_url: str | None):
   return {"message": "ok"}
