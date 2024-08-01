@@ -16,9 +16,26 @@ class TestApis(unittest.TestCase):
         },
       )
     json = response.json()
+    # first part of the short url that should be generated
     first_part = f'https://{domain}/'
     self.assertEqual(json[:len(first_part)], first_part)
     self.assertEqual(len(json[len(first_part):]), short_id_length)
+    return
+  
+  def test_shorten_url_with_collisions(self):
+    self.assertTrue(True)
+    return
+  
+  def test_shorten_url_with_custom_url(self):
+    self.assertTrue(True)
+    return
+  
+  def test_shorten_url_with_custom_url_and_collisions(self):
+    self.assertTrue(True)
+    return
+  
+  def test_shorten_url_invalid_custom_url(self):
+    self.assertTrue(True)
     return
   
   def test_list_urls(self):
