@@ -16,4 +16,4 @@ app.include_router(shorten_url.router)
 
 @app.get('/ping')
 def ping():
-  return 'ok'
+	return 'ok'

@@ -1,16 +1,17 @@
 {
-	"[python]": {
-		"editor.indentSize": "tabSize",
-  		"editor.detectIndentation": false,
-		"editor.formatOnType": true,
-        "editor.formatOnSave": true,
-		"editor.defaultFormatter": "ms-python.autopep8",
-		"editor.tabSize": 2,
-		"editor.insertSpaces": false,
-	},
-	"autopep8.args": [
-		"--indent-size=2",
-        "in-place=true",
-        "aggressive=3"
-	],
+  "[python]": {
+  },
+  
+  "editor.indentSize": "tabSize",
+  "editor.detectIndentation": false,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ms-python.autopep8",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": false,
+  "autopep8.args": [
+  	"--indent-size=2",
+    "in-place=true",
+    "aggressive=3"
+  ],
 }
