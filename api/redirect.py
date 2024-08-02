@@ -4,4 +4,4 @@ router = APIRouter()
 
 @router.get("/redirect")
 async def redirect(short_url: str):
-  return {"message": "ok"}
+	return {"message": "ok"}
