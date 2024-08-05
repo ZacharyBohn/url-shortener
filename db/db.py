@@ -13,11 +13,14 @@ class ShortUrlAlreadyExistsException(Exception):
 	pass
 
 
-# This class should only be used statically
 class Db:
 	_session: boto3.Session
 	_dynamodb: DynamoDBServiceResource
 	_short_url_group_id_length: int = 8
+
+	def __init__(self) -> None:
+		Exception('Do not instantiate this class')
+		return
 
 	@staticmethod
 	def setup():
