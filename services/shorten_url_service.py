@@ -1,9 +1,8 @@
 import re
 from enum import Enum
 
-from ..interfaces.di import DI
+from dependency_injector.di import DI
 
-from ..interfaces.shorten_url import IShortenUrlService
 from main import domain, short_id_length
 
 class InvalidUrlException(Exception): pass
@@ -30,7 +29,7 @@ class UrlScheme(Enum):
 	LDAP = "ldap"
 	BITCOIN = "bitcoin"
 
-class ShortenUrlService(IShortenUrlService):
+class ShortenUrlService:
 	def shorten_url(
 		self,
 		url: str,

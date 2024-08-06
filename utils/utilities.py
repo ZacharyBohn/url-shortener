@@ -2,10 +2,8 @@ import hashlib
 from uuid import uuid4
 from pydantic import PositiveInt
 
-from ..interfaces.utilities import IUtilities
 
-
-class Utilities(IUtilities):
+class Utilities:
 	def generate_random_string(self, length: int) -> str:
 		if length < 1:
 			return ''

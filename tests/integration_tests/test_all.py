@@ -1,12 +1,11 @@
 import unittest
-from unittest import mock
 from fastapi.testclient import TestClient
 from httpx import Response
 
 from db.db import Db
-from main import app, domain, short_id_length
-
-client = TestClient(app)
+from utils.utilities import Utilities
+from dependency_injector.di import DI
+from main import create_app, domain, short_id_length
 
 
 class TestApis(unittest.TestCase):
@@ -16,6 +15,7 @@ class TestApis(unittest.TestCase):
 	be returned. We will need to test if the URL is written to the DB.
 	"""
 	def test_shorten_url(self):
+		client = TestClient(create_app())
 		original_url: str = "http://other_domain.com/link-to-my-page"
 		response: Response = client.post(
 			"/shorten_url",
@@ -32,22 +32,20 @@ class TestApis(unittest.TestCase):
 		return
 
 	def test_shorten_url_with_collisions(self):
-
-		# used to override what the db returns to force
-		# a collision
-		def get_item_override(*args, **kwargs): # type: ignore
-
-			return
-		get_item_path: str = 'boto3.resources.factory.dynamodb.Table.get_item'
-
+		client = TestClient(create_app())
+		force_collision_utilities: Utilities = Utilities()
+		def collision_string(length: int) -> str:
+			return '0' * length
+		force_collision_utilities.generate_random_string = collision_string
+		DI(utils=force_collision_utilities)
 		original_url: str = "http://other_domain.com/link-to-my-page"
-		with mock.patch(get_item_path, get_item_override): # type: ignore
-			response: Response = client.post(
+		response: Response = client.post(
 				"/shorten_url",
 				params={
 					"url": original_url,
 				},
 			)
+			
 		short_url_response = response.json()
 		# first part of the short url that should be generated
 		first_part = f"https://{domain}/"
