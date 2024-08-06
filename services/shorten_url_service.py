@@ -1,8 +1,9 @@
 import re
 from enum import Enum
 
+from ..interfaces.di import DI
+
 from ..interfaces.shorten_url import IShortenUrlService
-from utils.hash_string import hash_string
 from main import domain, short_id_length
 
 class InvalidUrlException(Exception): pass
@@ -53,7 +54,7 @@ class ShortenUrlService(IShortenUrlService):
 		"""
 		if not self._is_valid_url(url):
 			raise InvalidUrlException("The provided URL was not valid.")
-		random_sequence: str = hash_string(url, short_id_length)
+		random_sequence: str = DI.instance().utils.generate_random_string(short_id_length)
 		short_url: str = f"{scheme.value}://{domain}/{random_sequence}"
 		
 		# TODO: add short url pair to db
