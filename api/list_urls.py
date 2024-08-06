@@ -4,5 +4,5 @@ from schemas.list_urls_response import ListUrlsResponse
 router = APIRouter()
 
 @router.post("/list_urls", response_model=ListUrlsResponse)
-async def shorten_url(url: str, short_url: str | None):
+async def list_urls():
 	return {"message": "ok"}

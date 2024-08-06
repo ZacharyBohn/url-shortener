@@ -1,16 +1,15 @@
 from fastapi import APIRouter, Response
 
-from ..interfaces.shorten_url import IShortenUrlService
-from services.shorten_url_service import InvalidUrlException
+from services.shorten_url_service import InvalidUrlException, ShortenUrlService
 from schemas.short_url_response import ShortUrlResponse
 from schemas.error_response import ErrorReponse
-from interfaces.di import DI
+from dependency_injector.di import DI
 
 router = APIRouter()
 
 @router.get("/shorten_url")
 async def shorten_url(url: str, short_url: str | None, response: Response):
-	shorten_url_service: IShortenUrlService = DI.instance().shorten_url_service
+	shorten_url_service: ShortenUrlService = DI.instance().shorten_url_service
 	
 	if short_url == None:
 		try:
