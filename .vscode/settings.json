@@ -1,0 +1,16 @@
+{
+	"editor.tabSize": 4,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": true,
+	"[python]": {
+		"editor.tabSize": 4,
+		"editor.insertSpaces": false,
+		"editor.detectIndentation": false,
+		"editor.formatOnType": true,
+		"editor.defaultFormatter": "ms-python.autopep8"
+	},
+	"autopep8.args": [
+		"aggressive=3",
+		"in-place=true"
+	]
+}
