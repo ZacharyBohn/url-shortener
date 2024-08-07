@@ -1,5 +1,6 @@
 from typing import Optional
 
+from ..db.db import Db
 from utils.utilities import Utilities
 
 from services.redirect import RedirectService
@@ -26,6 +27,7 @@ class DI:
 			redirect_service: Optional[RedirectService] = None,
 			shorten_url_service: Optional[ShortenUrlService] = None,
 			utils: Optional[Utilities] = None,
+			db: Optional[Db] = None,
 			) -> None:
 		if DI._instance is not None:
 			raise Exception('Singleton already initialized')
@@ -37,6 +39,7 @@ class DI:
 		self.shorten_url_service: ShortenUrlService = shorten_url_service \
 			or ShortenUrlService()
 		self.utils = utils or Utilities()
+		self.db = db or Db()
 		return
 	
 	@staticmethod

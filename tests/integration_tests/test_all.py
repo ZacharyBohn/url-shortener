@@ -15,6 +15,10 @@ from main import create_app, domain, short_id_length
 
 
 class TestApis(unittest.TestCase):
+	def setUp(self) -> None:
+		DI.reset()
+		return super().setUp()
+
 	@mock_aws
 	def test_shorten_url(self):
 		client = TestClient(create_app())
@@ -35,8 +39,7 @@ class TestApis(unittest.TestCase):
 		return
 
 	@mock_aws
-	def test_shorten_url_with_collisions(self):
-		client = TestClient(create_app())
+	async def test_shorten_url_with_collisions(self):
 		# monkey wrench the utility function to force collisions.
 		# counter is used so that when it tries to regenerate a
 		# new string after a collision, a new one will be generated.
@@ -48,6 +51,13 @@ class TestApis(unittest.TestCase):
 			return f'{counter[0]}' * length
 		force_collision_utilities.generate_random_string = collision_string
 		DI(utils=force_collision_utilities)
+		# drop a short url in the db to collide with
+		# the generate_random_string function will generate a short id
+		# of just 0's
+		original_url_1: str = "http://other_domain.com/link-to-my-page"
+		short_url_1: str = f"https://{domain}/{'0' * short_id_length}"
+		await Db.create_short_url(original_url_1, short_url_1)
+		client = TestClient(create_app())
 		original_url: str = "http://other_domain.com/link-to-my-page"
 		response: Response = client.post(
 				"/shorten_url",

@@ -3,10 +3,10 @@ from enum import Enum
 
 from dependency_injector.di import DI
 
+from ..exceptions.exceptions import InvalidUrlException
 from main import domain, short_id_length
 
-class InvalidUrlException(Exception): pass
-
+# TODO: move this to an enums file
 class UrlScheme(Enum):
 	HTTP = "http"
 	HTTPS = "https"
@@ -30,10 +30,10 @@ class UrlScheme(Enum):
 	BITCOIN = "bitcoin"
 
 class ShortenUrlService:
-	def shorten_url(
+	async def shorten_url(
 		self,
 		url: str,
-		custom_short_url: str | None = None,
+		custom_short_url_id: str | None = None,
 		scheme: UrlScheme = UrlScheme.HTTPS,
 		) -> str:
 		"""Generates a short url given a real url
@@ -53,11 +53,13 @@ class ShortenUrlService:
 		"""
 		if not self._is_valid_url(url):
 			raise InvalidUrlException("The provided URL was not valid.")
-		random_sequence: str = DI.instance().utils.generate_random_string(short_id_length)
+		random_sequence: str
+		if custom_short_url_id:
+			random_sequence = await DI().instance().db.create_short_url(url, custom_short_url_id)
+		else:
+			random_sequence = DI.instance().utils.generate_random_string(short_id_length)
+			random_sequence = await DI().instance().db.create_short_url(url)
 		short_url: str = f"{scheme.value}://{domain}/{random_sequence}"
-		
-		# TODO: add short url pair to db
-		
 		return short_url
 
 	def _is_valid_url(self, url: str) -> bool:
