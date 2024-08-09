@@ -5,10 +5,11 @@ from httpx import Response
 from moto import mock_aws
 
 from db.db import Db
-from ...schemas.list_urls_response import ListUrlsResponse
-from ...schemas.redirect_response import RedirectResponse
-from ...schemas.short_url_response import ShortUrlResponse
-from ...schemas.error_response import ErrorReponse
+from ...dependency_injector.di_defaults import set_di_production_defaults
+from schemas.list_urls_response import ListUrlsResponse
+from schemas.redirect_response import RedirectResponse
+from schemas.short_url_response import ShortUrlResponse
+from schemas.error_response import ErrorReponse
 from utils.utilities import Utilities
 from dependency_injector.di import DI
 from main import create_app, domain, short_id_length
@@ -17,6 +18,7 @@ from main import create_app, domain, short_id_length
 class TestApis(unittest.TestCase):
 	def setUp(self) -> None:
 		DI.reset()
+		set_di_production_defaults()
 		return super().setUp()
 
 	@mock_aws
@@ -50,7 +52,8 @@ class TestApis(unittest.TestCase):
 			counter[0] += 1
 			return f'{counter[0]}' * length
 		force_collision_utilities.generate_random_string = collision_string
-		DI(utils=force_collision_utilities)
+
+		DI.instance().utils = force_collision_utilities
 		# drop a short url in the db to collide with
 		# the generate_random_string function will generate a short id
 		# of just 0's

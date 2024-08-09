@@ -3,7 +3,7 @@ import boto3
 from botocore.exceptions import ClientError
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource
 
-from ..dependency_injector.di import DI
+from dependency_injector.di import DI
 from models.short_url import ShortUrlModel
 from models.short_url_group import ShortUrlGroupModel
 from main import short_id_length
@@ -59,7 +59,7 @@ class Db:
 		if short_url_id != None:
 			return await Db._create_short_url_custom_id(original_url, short_url_id)
 
-		utils = DI().instance().utils
+		utils = DI.instance().utils
 		while True:
 			short_url_id = utils.generate_random_string(short_id_length)
 			group_id: str = utils.hash_string(
@@ -83,7 +83,7 @@ class Db:
 		original_url: str,
 		short_url_id: str,
 	) -> str:
-		utils = DI().instance().utils
+		utils = DI.instance().utils
 		group_id: str = utils.hash_string(
 			short_url_id, Db._short_url_group_id_length)
 		group: ShortUrlGroupModel | None = await Db._get_url_group(group_id)

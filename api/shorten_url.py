@@ -13,7 +13,7 @@ async def shorten_url(url: str, short_url: str | None, response: Response):
 	
 	if short_url == None:
 		try:
-			generated_short_url: str = shorten_url_service.shorten_url(
+			generated_short_url: str = await shorten_url_service.shorten_url(
 				url=url,
 			)
 			return ShortUrlResponse(

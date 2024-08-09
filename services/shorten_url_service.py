@@ -3,7 +3,7 @@ from enum import Enum
 
 from dependency_injector.di import DI
 
-from ..exceptions.exceptions import InvalidUrlException
+from exceptions.exceptions import InvalidUrlException
 from main import domain, short_id_length
 
 # TODO: move this to an enums file
@@ -55,10 +55,10 @@ class ShortenUrlService:
 			raise InvalidUrlException("The provided URL was not valid.")
 		random_sequence: str
 		if custom_short_url_id:
-			random_sequence = await DI().instance().db.create_short_url(url, custom_short_url_id)
+			random_sequence = await DI.instance().db.create_short_url(url, custom_short_url_id)
 		else:
 			random_sequence = DI.instance().utils.generate_random_string(short_id_length)
-			random_sequence = await DI().instance().db.create_short_url(url)
+			random_sequence = await DI.instance().db.create_short_url(url)
 		short_url: str = f"{scheme.value}://{domain}/{random_sequence}"
 		return short_url
 

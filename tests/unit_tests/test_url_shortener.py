@@ -1,3 +1,4 @@
+from ...dependency_injector.di_defaults import set_di_production_defaults
 from ...db.db import Db
 from ...models.short_url import ShortUrlModel
 from ...models.short_url_group import ShortUrlGroupModel
@@ -12,6 +13,7 @@ from main import domain, short_id_length
 class TestUrlShortener(unittest.TestCase):
 	def setUp(self) -> None:
 		DI.reset()
+		set_di_production_defaults()
 		return super().setUp()
 
 	def test_valid_url_shortener(self):
@@ -73,8 +75,9 @@ class TestUrlShortener(unittest.TestCase):
 				)
 		force_collision_db: Db = Db()
 		force_collision_db._get_url_group = _get_url_group_preset # type: ignore
-
-		DI(utils=force_collision_utilities, db=force_collision_db)
+		
+		DI.instance().utils = force_collision_utilities
+		DI.instance().db = force_collision_db
 
 		short_url = ShortenUrlService().shorten_url(
 			"http://domain.com/link-to-some-page"
@@ -104,7 +107,7 @@ class TestUrlShortener(unittest.TestCase):
 			counter[0] += 1
 			return f'{counter[0]}' * length
 		force_collision_utilities.generate_random_string = collision_string
-		DI(utils=force_collision_utilities)
+		DI.instance().utils = force_collision_utilities
 
 		with self.assertRaises(UnavailableUrlException):
 			await ShortenUrlService().shorten_url(
