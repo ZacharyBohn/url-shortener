@@ -4,6 +4,7 @@ from botocore.exceptions import ClientError
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource
 
 from dependency_injector.di import DI
+from ..interfaces.db_interface import IDb
 from models.short_url import ShortUrlModel
 from models.short_url_group import ShortUrlGroupModel
 from main import short_id_length
@@ -13,7 +14,7 @@ class ShortUrlAlreadyExistsException(Exception):
 	pass
 
 
-class Db:
+class Db(IDb):
 	_session: boto3.Session
 	_dynamodb: DynamoDBServiceResource
 	_short_url_group_id_length: int = 8
@@ -141,7 +142,7 @@ class Db:
 
 	# Put an item in the table
 	@staticmethod
-	def put_item(table_name: str, item) -> bool:  # type: ignore
+	def _put_item(table_name: str, item) -> bool:  # type: ignore
 		table = Db._dynamodb.Table(table_name)
 		try:
 			table.put_item(Item=item)  # type: ignore
@@ -151,7 +152,7 @@ class Db:
 
 	# Get an item from the table
 	@staticmethod
-	def get_item(table_name: str, key: str):
+	def _get_item(table_name: str, key: str):
 		table = Db._dynamodb.Table(table_name)
 		try:
 			# presumes that the partition key is in the

@@ -1,10 +1,10 @@
-from ...dependency_injector.di_defaults import set_di_production_defaults
-from ...db.db import Db
-from ...models.short_url import ShortUrlModel
-from ...models.short_url_group import ShortUrlGroupModel
-from ...exceptions.exceptions import UnavailableUrlException
-from ...utils.utilities import Utilities
-from ...dependency_injector.di import DI
+from dependency_injector.di_defaults import set_di_production_defaults
+from db.db import Db
+from models.short_url import ShortUrlModel
+from models.short_url_group import ShortUrlGroupModel
+from exceptions.exceptions import UnavailableUrlException
+from utils.utilities import Utilities
+from dependency_injector.di import DI
 from services.shorten_url_service import ShortenUrlService, InvalidUrlException
 import unittest
 

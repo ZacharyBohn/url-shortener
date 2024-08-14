@@ -1,12 +1,8 @@
-from typing import TYPE_CHECKING
-from utils.utilities import Utilities
-
-from services.redirect import RedirectService
-from services.list_urls import ListUrlsService
-from services.shorten_url_service import ShortenUrlService
-
-if TYPE_CHECKING:
-	from db.db import Db
+from interfaces.db_interface import IDb
+from interfaces.utilities_interface import IUtilities
+from interfaces.shorten_url_interface import IShortenUrl
+from interfaces.redirect_interface import IRedirect
+from interfaces.list_urls_interface import IListUrls
 
 
 # Dependency injector
@@ -24,20 +20,20 @@ class DI:
 
 	def __init__(
 			self,
-			list_urls_service: ListUrlsService,
-			redirect_service: RedirectService,
-			shorten_url_service: ShortenUrlService,
-			utils: Utilities,
-			db: Db,
+			list_urls_service: IListUrls,
+			redirect_service: IRedirect,
+			shorten_url_service: IShortenUrl,
+			utils: IUtilities,
+			db: IDb,
 			) -> None:
 		if DI._instance is not None:
 			raise Exception('Singleton already initialized')
 		
-		self.list_urls_service: ListUrlsService = list_urls_service
-		self.redirect_service: RedirectService = redirect_service
-		self.shorten_url_service: ShortenUrlService = shorten_url_service
-		self.utils = utils
-		self.db = db
+		self.list_urls_service: IListUrls = list_urls_service
+		self.redirect_service: IRedirect = redirect_service
+		self.shorten_url_service: IShortenUrl = shorten_url_service
+		self.utils: IUtilities = utils
+		self.db: IDb = db
 		return
 	
 	@staticmethod
