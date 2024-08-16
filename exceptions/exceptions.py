@@ -3,3 +3,6 @@ class InvalidUrlException(Exception):
 
 class UnavailableUrlException(Exception):
 	pass
+
+class ShortUrlAlreadyExistsException(Exception):
+	pass
