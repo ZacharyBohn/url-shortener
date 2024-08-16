@@ -1,8 +1,7 @@
-from dependency_injector.di_defaults import set_di_production_defaults
-from db.db import DB
-from models.short_url_model import ShortUrlModel
-from models.short_url_group_model import ShortUrlGroupModel
+from database.db import DB
 from exceptions.exceptions import UnavailableUrlException
+from services.redirect_service import RedirectService
+from services.list_urls_service import ListUrlsService
 from utils.utilities import Utilities
 from dependency_injector.di import DI
 from services.shorten_url_service import ShortenUrlService, InvalidUrlException
@@ -13,7 +12,13 @@ from main import domain, short_id_length
 class TestUrlShortener(unittest.TestCase):
 	def setUp(self) -> None:
 		DI.reset()
-		set_di_production_defaults()
+		DI(
+			list_urls_service=ListUrlsService(),
+			redirect_service=RedirectService(),
+			shorten_url_service=ShortenUrlService(),
+			utils=Utilities(),
+			db=DB,
+		)
 		return super().setUp()
 
 	def test_valid_url_shortener(self):
@@ -42,48 +47,16 @@ class TestUrlShortener(unittest.TestCase):
 		self.assertTrue(type(short_url) is str and len(short_url) == short_url_length)
 		return
 		
-	async def test_invalid_url_shortener(self):
+	def test_invalid_url_shortener(self):
 		with self.assertRaises(InvalidUrlException):
-			await ShortenUrlService().shorten_url(
+			ShortenUrlService().shorten_url(
 			'invalid_scheme://domain.com/',
 			)
 		return
 		
 	def test_shorten_url_with_collisions(self):
-		# monkey wrench the utility function to force collisions
-		# during the first time it's called
-		class _IsFirstGenerationCall:
-			value = True
-		def collision_string(length: int) -> str:
-			if _IsFirstGenerationCall.value:
-				return '0' * length
-			# after the first call has been intercepted,
-			# just generate random strings as before
-			return Utilities().generate_random_string(length)
-		force_collision_utilities: Utilities = Utilities()
-		force_collision_utilities.generate_random_string = collision_string
-
-		# force the database to think there is a collision
-		async def _get_url_group_preset(url_group_id: str) -> ShortUrlGroupModel | None:
-			return ShortUrlGroupModel(
-				url_pairs=[
-					ShortUrlModel(
-						id='0' * short_id_length,
-						original_url='http://domain.com/'
-					),
-				]
-				)
-		force_collision_db: DB = DB()
-		force_collision_db._get_url_group = _get_url_group_preset # type: ignore
-		
-		DI.instance().utils = force_collision_utilities
-		DI.instance().db = force_collision_db
-
-		short_url = ShortenUrlService().shorten_url(
-			"http://domain.com/link-to-some-page"
-			)
-		short_url_length = len(f"http://{domain}/") + short_id_length
-		self.assertTrue(type(short_url) is str and len(short_url) == short_url_length)
+		# TODO: create a short url id that collides
+		# short_url = DB.create_short_url('http://original.com/long-url', '0' * short_id_length)
 		return
 		
 	def test_shorten_url_with_custom_url(self):
@@ -96,7 +69,7 @@ class TestUrlShortener(unittest.TestCase):
 		self.assertTrue(type(short_url) is str and len(short_url) == short_url_length)
 		return
 		
-	async def test_shorten_url_with_collisions_and_custom_url(self):
+	def test_shorten_url_with_collisions_and_custom_url(self):
 		# monkey wrench the utility function to force collisions
 		# counter is used so that when it tries to regenerate a
 		# new string after a collision, a new one will be generated.
@@ -110,7 +83,7 @@ class TestUrlShortener(unittest.TestCase):
 		DI.instance().utils = force_collision_utilities
 
 		with self.assertRaises(UnavailableUrlException):
-			await ShortenUrlService().shorten_url(
+			ShortenUrlService().shorten_url(
 				"http://domain.com/link-to-some-page",
 				f"http://{domain}/{'0' * short_id_length}"
 				)

@@ -1,9 +1,7 @@
 from typing import List, Optional
-
 from pydantic import ValidationError
 
 from exceptions.exceptions import ShortUrlAlreadyExistsException
-
 from pynamo_db import PynamoDB
 from dependency_injector.di import DI
 from interfaces.db_interface import IDB

@@ -4,12 +4,14 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from moto import mock_aws
 
-from db.db import DB
-from ...dependency_injector.di_defaults import set_di_production_defaults
+from database.db import DB
 from schemas.list_urls_response import ListUrlsResponse
 from schemas.redirect_response import RedirectResponse
 from schemas.short_url_response import ShortUrlResponse
 from schemas.error_response import ErrorReponse
+from services.shorten_url_service import ShortenUrlService
+from services.redirect_service import RedirectService
+from services.list_urls_service import ListUrlsService
 from utils.utilities import Utilities
 from dependency_injector.di import DI
 from main import create_app, domain, short_id_length
@@ -18,7 +20,13 @@ from main import create_app, domain, short_id_length
 class TestApis(unittest.TestCase):
 	def setUp(self) -> None:
 		DI.reset()
-		set_di_production_defaults()
+		DI(
+			list_urls_service=ListUrlsService(),
+			redirect_service=RedirectService(),
+			shorten_url_service=ShortenUrlService(),
+			utils=Utilities(),
+			db=DB,
+		)
 		return super().setUp()
 
 	@mock_aws
@@ -41,7 +49,7 @@ class TestApis(unittest.TestCase):
 		return
 
 	@mock_aws
-	async def test_shorten_url_with_collisions(self):
+	def test_shorten_url_with_collisions(self):
 		# monkey wrench the utility function to force collisions.
 		# counter is used so that when it tries to regenerate a
 		# new string after a collision, a new one will be generated.
@@ -59,7 +67,7 @@ class TestApis(unittest.TestCase):
 		# of just 0's
 		original_url_1: str = "http://other_domain.com/link-to-my-page"
 		short_url_1: str = f"https://{domain}/{'0' * short_id_length}"
-		await DB.create_short_url(original_url_1, short_url_1)
+		DB.create_short_url(original_url_1, short_url_1)
 		client = TestClient(create_app())
 		original_url: str = "http://other_domain.com/link-to-my-page"
 		response: Response = client.post(
@@ -80,7 +88,7 @@ class TestApis(unittest.TestCase):
 		return
 
 	@mock_aws
-	async def test_shorten_url_with_custom_url(self):
+	def test_shorten_url_with_custom_url(self):
 		client = TestClient(create_app())
 		original_url: str = "http://other_domain.com/link-to-my-page"
 		custom_id: str = '012345'
@@ -99,7 +107,7 @@ class TestApis(unittest.TestCase):
 		# gave the endpoint
 		self.assertEqual(short_url_response.short_url[len(first_part):], custom_id)
 		# ensure that the url was inserted into the db
-		self.assertEqual(await DB.get_short_url(short_url_response.short_url), original_url)
+		self.assertEqual(DB.get_short_url(short_url_response.short_url), original_url)
 		return
 
 	@mock_aws
@@ -137,11 +145,11 @@ class TestApis(unittest.TestCase):
 		return
 
 	@mock_aws
-	async def test_redirect(self):
+	def test_redirect(self):
 		client = TestClient(create_app())
 		original_url: str = "http://other_domain.com/link-to-my-page"
 		short_url: str = f"https://{domain}/012345"
-		await DB.create_short_url(original_url, short_url)
+		DB.create_short_url(original_url, short_url)
 		response: Response = client.post(
 			"/redirect",
 			params={
@@ -169,14 +177,14 @@ class TestApis(unittest.TestCase):
 		return
 
 	@mock_aws
-	async def test_list_urls(self):
+	def test_list_urls(self):
 		client = TestClient(create_app())
 		original_url_1: str = "http://other_domain.com/link-to-my-page"
 		short_url_1: str = f"https://{domain}/012345"
-		await DB.create_short_url(original_url_1, short_url_1)
+		DB.create_short_url(original_url_1, short_url_1)
 		original_url_2: str = "http://other_domain.com/link-to-my-other-page"
 		short_url_2: str = f"https://{domain}/678901"
-		await DB.create_short_url(original_url_2, short_url_2)
+		DB.create_short_url(original_url_2, short_url_2)
 		response: Response = client.post(
 			"/list_urls",
 		)
