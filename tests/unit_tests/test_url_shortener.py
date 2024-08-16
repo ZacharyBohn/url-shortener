@@ -1,7 +1,7 @@
 from dependency_injector.di_defaults import set_di_production_defaults
-from db.db import Db
-from models.short_url import ShortUrlModel
-from models.short_url_group import ShortUrlGroupModel
+from db.db import DB
+from models.short_url_model import ShortUrlModel
+from models.short_url_group_model import ShortUrlGroupModel
 from exceptions.exceptions import UnavailableUrlException
 from utils.utilities import Utilities
 from dependency_injector.di import DI
@@ -73,7 +73,7 @@ class TestUrlShortener(unittest.TestCase):
 					),
 				]
 				)
-		force_collision_db: Db = Db()
+		force_collision_db: DB = DB()
 		force_collision_db._get_url_group = _get_url_group_preset # type: ignore
 		
 		DI.instance().utils = force_collision_utilities

@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from moto import mock_aws
 
-from db.db import Db
+from db.db import DB
 from ...dependency_injector.di_defaults import set_di_production_defaults
 from schemas.list_urls_response import ListUrlsResponse
 from schemas.redirect_response import RedirectResponse
@@ -37,7 +37,7 @@ class TestApis(unittest.TestCase):
 		# ensure the short id length is correct
 		self.assertEqual(len(short_url_response[len(first_part) :]), short_id_length)
 		# ensure that the url was inserted into the db
-		self.assertEqual(Db.get_original_url(short_url_response), original_url)
+		self.assertEqual(DB.get_short_url(short_url_response), original_url)
 		return
 
 	@mock_aws
@@ -59,7 +59,7 @@ class TestApis(unittest.TestCase):
 		# of just 0's
 		original_url_1: str = "http://other_domain.com/link-to-my-page"
 		short_url_1: str = f"https://{domain}/{'0' * short_id_length}"
-		await Db.create_short_url(original_url_1, short_url_1)
+		await DB.create_short_url(original_url_1, short_url_1)
 		client = TestClient(create_app())
 		original_url: str = "http://other_domain.com/link-to-my-page"
 		response: Response = client.post(
@@ -76,7 +76,7 @@ class TestApis(unittest.TestCase):
 		self.assertEqual(len(short_url_response[len(first_part) :]), short_id_length)
 		# ensure that the url was inserted into the db and
 		# was able to overcome the collision
-		self.assertEqual(Db.get_original_url(short_url_response), original_url)
+		self.assertEqual(DB.get_short_url(short_url_response), original_url)
 		return
 
 	@mock_aws
@@ -99,7 +99,7 @@ class TestApis(unittest.TestCase):
 		# gave the endpoint
 		self.assertEqual(short_url_response.short_url[len(first_part):], custom_id)
 		# ensure that the url was inserted into the db
-		self.assertEqual(await Db.get_original_url(short_url_response.short_url), original_url)
+		self.assertEqual(await DB.get_short_url(short_url_response.short_url), original_url)
 		return
 
 	@mock_aws
@@ -141,7 +141,7 @@ class TestApis(unittest.TestCase):
 		client = TestClient(create_app())
 		original_url: str = "http://other_domain.com/link-to-my-page"
 		short_url: str = f"https://{domain}/012345"
-		await Db.create_short_url(original_url, short_url)
+		await DB.create_short_url(original_url, short_url)
 		response: Response = client.post(
 			"/redirect",
 			params={
@@ -173,10 +173,10 @@ class TestApis(unittest.TestCase):
 		client = TestClient(create_app())
 		original_url_1: str = "http://other_domain.com/link-to-my-page"
 		short_url_1: str = f"https://{domain}/012345"
-		await Db.create_short_url(original_url_1, short_url_1)
+		await DB.create_short_url(original_url_1, short_url_1)
 		original_url_2: str = "http://other_domain.com/link-to-my-other-page"
 		short_url_2: str = f"https://{domain}/678901"
-		await Db.create_short_url(original_url_2, short_url_2)
+		await DB.create_short_url(original_url_2, short_url_2)
 		response: Response = client.post(
 			"/list_urls",
 		)

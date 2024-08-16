@@ -3,8 +3,8 @@ from dependency_injector.di import DI
 from exceptions.exceptions import InvalidUrlException
 from interfaces.shorten_url_interface import IShortenUrl
 from interfaces.url_schemes import UrlScheme
+from interfaces.utilities_interface import IUtilities
 from main import domain, short_id_length
-from utils.utilities import Utilities
 
 
 class ShortenUrlService(IShortenUrl):
@@ -29,7 +29,7 @@ class ShortenUrlService(IShortenUrl):
 		Raises:
 			InvalidUrlException: if the given url is not in a valid format
 		"""
-		utils: Utilities = DI.instance().utils
+		utils: IUtilities = DI.instance().utils
 		if not utils.is_valid_url(url):
 			raise InvalidUrlException("The provided URL was not valid.")
 		random_sequence: str

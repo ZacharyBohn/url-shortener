@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from models.short_url import ShortUrlModel
+from models.short_url_model import ShortUrlModel
 
-class IDb(ABC):
+class IDB(ABC):
 	@staticmethod
 	@abstractmethod
 	def setup():
@@ -11,17 +11,17 @@ class IDb(ABC):
 
 	@staticmethod
 	@abstractmethod
-	async def get_urls() -> list[ShortUrlModel]:
+	def get_all_urls() -> list[ShortUrlModel]:
 		pass
 
 	@staticmethod
 	@abstractmethod
-	async def get_original_url(short_url_id: str) -> ShortUrlModel:
+	def get_short_url(short_url_id: str) -> ShortUrlModel | None:
 		pass
 
 	@staticmethod
 	@abstractmethod
-	async def create_short_url(
+	def create_short_url(
 		original_url: str,
 		short_url_id: Optional[str] = None,
 	) -> str:

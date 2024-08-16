@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from api import list_urls
 from api import redirect
 from api import shorten_url
-from db.db import Db
+from db.db import DB
 from utils.utilities import Utilities
 from services.shorten_url_service import ShortenUrlService
 from services.redirect_service import RedirectService
@@ -31,6 +31,6 @@ if __name__ == "__main__":
 		redirect_service=RedirectService(),
 		shorten_url_service=ShortenUrlService(),
 		utils=Utilities(),
-		db=Db(),
+		db=DB(),
 	)
 	app = create_app()

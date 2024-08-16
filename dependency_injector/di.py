@@ -1,4 +1,4 @@
-from interfaces.db_interface import IDb
+from interfaces.db_interface import IDB
 from interfaces.utilities_interface import IUtilities
 from interfaces.shorten_url_interface import IShortenUrl
 from interfaces.redirect_interface import IRedirect
@@ -24,7 +24,7 @@ class DI:
 			redirect_service: IRedirect,
 			shorten_url_service: IShortenUrl,
 			utils: IUtilities,
-			db: IDb,
+			db: IDB,
 			) -> None:
 		if DI._instance is not None:
 			raise Exception('Singleton already initialized')
@@ -33,7 +33,7 @@ class DI:
 		self.redirect_service: IRedirect = redirect_service
 		self.shorten_url_service: IShortenUrl = shorten_url_service
 		self.utils: IUtilities = utils
-		self.db: IDb = db
+		self.db: IDB = db
 		return
 	
 	@staticmethod
