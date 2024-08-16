@@ -1,52 +1,37 @@
-from typing import Optional
-import boto3
-from botocore.exceptions import ClientError
-from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource
+from typing import List, Optional
 
+from pydantic import ValidationError
+
+from exceptions.exceptions import ShortUrlAlreadyExistsException
+
+from pynamo_db import PynamoDB
 from dependency_injector.di import DI
-from ..interfaces.db_interface import IDb
-from models.short_url import ShortUrlModel
-from models.short_url_group import ShortUrlGroupModel
+from interfaces.db_interface import IDB
+from models.short_url_model import ShortUrlModel
+from models.short_url_group_model import ShortUrlGroupModel
 from main import short_id_length
 
 
-class ShortUrlAlreadyExistsException(Exception):
-	pass
-
-
-class Db(IDb):
-	_session: boto3.Session
-	_dynamodb: DynamoDBServiceResource
-	_short_url_group_id_length: int = 8
-
-	def __init__(self) -> None:
-		Exception('Do not instantiate this class')
-		return
+class DB(IDB, PynamoDB):
+	_group_id_length: int = 8
 
 	@staticmethod
-	def setup():
-
-		# Initialize a session using Amazon DynamoDB
-		# it should pull access id and key from environment
-		# variables
-		Db._session = boto3.Session(
-			# aws_access_key_id='YOUR_ACCESS_KEY',
-			# aws_secret_access_key='YOUR_SECRET_KEY',
-			region_name="us-east-1"
-		)
-		Db._dynamodb = session.resource("dynamodb")  # type: ignore
-		return
-
-	@staticmethod
-	async def get_urls() -> list[ShortUrlModel]:
-		return []
+	def get_all_urls() -> List[ShortUrlModel]:
+		"""
+		Returns all url pairs in the db
+		"""
+		all_urls: List[ShortUrlModel] = []
+		for group in DB._scan_table('shorten_url'):
+			try:
+				group_model = ShortUrlGroupModel(**group)
+				for short_url in group_model.url_pairs:
+					all_urls.append(short_url)
+			except ValidationError as e:
+				print(f'Failed to validate db json data in DB.get_all_urls(): {e}')
+		return all_urls
 
 	@staticmethod
-	async def get_original_url(short_url_id: str) -> ShortUrlModel:
-		return ShortUrlModel()
-
-	@staticmethod
-	async def create_short_url(
+	def create_short_url(
 		original_url: str,
 		short_url_id: Optional[str] = None,
 	) -> str:
@@ -57,39 +42,48 @@ class Db(IDb):
 		This function handles collisions of group id in
 		the database automatically.
 		"""
-		if short_url_id != None:
-			return await Db._create_short_url_custom_id(original_url, short_url_id)
+		if short_url_id is not None:
+			return DB._create_short_url_custom_id(original_url, short_url_id)
 
 		utils = DI.instance().utils
 		while True:
 			short_url_id = utils.generate_random_string(short_id_length)
 			group_id: str = utils.hash_string(
-				short_url_id, Db._short_url_group_id_length)
-			group: ShortUrlGroupModel | None = await Db._get_url_group(group_id)
-			if group == None:
-				group = ShortUrlGroupModel()
-			if not group.contains_short_url_id(short_url_id):
-				break
+				short_url_id, DB._group_id_length)
+			group: ShortUrlGroupModel | None = DB._get_url_group(group_id)
+			if group == None: group = ShortUrlGroupModel(group_id)
+			# Need to continue to generate a new string and check if
+			# it already exists in the db until we get a actually unique one.
+			# Collision occurrence should be very low, like one in 100 trillion.
+			if not group.contains_short_url_id(short_url_id): break
 		group.url_pairs.append(
 			ShortUrlModel(
 				id=short_url_id,
 				original_url=original_url,
 			)
 		)
-		group.save()
+		DB._save_url_group(group)
 		return short_url_id
 
 	@staticmethod
-	async def _create_short_url_custom_id(
+	def get_short_url(short_url_id: str) -> ShortUrlModel | None:
+		utils = DI.instance().utils
+		group_id: str = utils.hash_string(short_url_id, DB._group_id_length)
+		group: ShortUrlGroupModel | None = DB._get_url_group(group_id)
+		if group is None: return None
+		return group.get_short_url_model(short_url_id)
+
+	@staticmethod
+	def _create_short_url_custom_id(
 		original_url: str,
 		short_url_id: str,
 	) -> str:
 		utils = DI.instance().utils
 		group_id: str = utils.hash_string(
-			short_url_id, Db._short_url_group_id_length)
-		group: ShortUrlGroupModel | None = await Db._get_url_group(group_id)
+			short_url_id, DB._group_id_length)
+		group: ShortUrlGroupModel | None = DB._get_url_group(group_id)
 		if group == None:
-			group = ShortUrlGroupModel()
+			group = ShortUrlGroupModel(group_id)
 		if group.contains_short_url_id(short_url_id):
 			raise ShortUrlAlreadyExistsException()
 
@@ -99,66 +93,24 @@ class Db(IDb):
 				original_url=original_url,
 			)
 		)
-		group.save()
+		DB._save_url_group(group)
 		return short_url_id
 
 	@staticmethod
-	async def _get_url_group(url_group_id: str) -> ShortUrlGroupModel | None:
+	def _get_url_group(url_group_id: str) -> ShortUrlGroupModel | None:
 		"""
 		Returns either the group associated with the group id
 		or None if it doesn't exist
 		"""
-		return ShortUrlGroupModel()
-
-	@staticmethod
-	def _table_exists(table_name: str) -> bool:
+		json = DB._get_item('shorten_urls', url_group_id)
+		if json is None: return None
 		try:
-			Db._dynamodb.meta.client.describe_table(TableName=table_name)
-			return True
-		except ClientError:
-			return False
-
-	@staticmethod
-	def _create_table(table_name: str) -> bool:
-		if Db._table_exists(table_name):
-			raise Exception("table already exists")
-
-		try:
-			table = Db._dynamodb.create_table(
-				TableName=table_name,
-				# Partition key
-				KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
-				AttributeDefinitions=[
-					{"AttributeName": "id", "AttributeType": "S"}],
-				ProvisionedThroughput={
-					"ReadCapacityUnits": 10,
-					"WriteCapacityUnits": 10,
-				},
-			)
-			table.wait_until_exists()
-			return True
-		except ClientError:
-			return False
-
-	# Put an item in the table
-	@staticmethod
-	def _put_item(table_name: str, item) -> bool:  # type: ignore
-		table = Db._dynamodb.Table(table_name)
-		try:
-			table.put_item(Item=item)  # type: ignore
-			return True
-		except ClientError:
-			return False
-
-	# Get an item from the table
-	@staticmethod
-	def _get_item(table_name: str, key: str):
-		table = Db._dynamodb.Table(table_name)
-		try:
-			# presumes that the partition key is in the
-			# format of 'id': [str]
-			response = table.get_item(Key={"id": key})
-			item = response.get("Item")
-			return item
-		except ClientError:
+			model = ShortUrlGroupModel(**json)
+			return model
+		except ValidationError as e:
+			print(f'Failed to convert url group model: {e}')
 			return None
+	
+	@staticmethod
+	def _save_url_group(group: ShortUrlGroupModel) -> bool:
+		return DB._put_item('shorten_urls', group.model_dump())
