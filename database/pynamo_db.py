@@ -31,7 +31,6 @@ class PynamoDB:
 	def close_connection(cls):
 		cls._session = None
 		cls._dynamodb = None
-		print('pynamo reset')
 		return
 
 	@classmethod

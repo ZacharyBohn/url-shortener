@@ -39,3 +39,19 @@ class Utilities(IUtilities):
 		)
 
 		return url_pattern.match(url) != None
+	
+	def extract_short_url_id(self, short_url: str, id_length: int) -> str:
+		pattern = fr'(\d{{{id_length}}})$'
+		match = re.search(pattern, short_url)
+		if match:
+			return match.group(1)
+		else:
+			raise Exception(f"The URL does not contain a valid {id_length}-digit ID")
+		
+	def generate_short_url_from_id(
+			self,
+			short_url_id: str,
+			scheme: UrlScheme,
+			domain: str
+			) -> str:
+		return f"{scheme.value}://{domain}/{short_url_id}"

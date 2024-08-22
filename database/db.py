@@ -92,7 +92,8 @@ class DB(IDB, PynamoDB):
 	) -> str:
 		utils = DI.instance().utils
 		group_id: str = utils.hash_string(
-			short_url_id, cls._group_id_length)
+			short_url_id, cls._group_id_length
+			)
 		group: ShortUrlGroupModel | None = cls._get_url_group(group_id)
 		if group == None:
 			group = ShortUrlGroupModel(id=group_id)

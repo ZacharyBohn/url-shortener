@@ -3,5 +3,5 @@ from typing import Dict
 
 class IListUrls(ABC):
 	@abstractmethod
-	async def list_urls(self) -> Dict[str, str]:
+	def list_urls(self) -> Dict[str, str]:
 		pass
