@@ -5,32 +5,43 @@ from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource
 
 
 class PynamoDB:
-	_session: boto3.Session
-	_dynamodb: DynamoDBServiceResource
+	_session: boto3.Session | None = None
+	_dynamodb: DynamoDBServiceResource | None = None
 
 	def __init__(self) -> None:
 		Exception('Do not instantiate this class')
 		return
 
-	@staticmethod
-	def setup():
+	@classmethod
+	def open_connection(cls):
 		"""
 		Initialize a session using Amazon DynamoDB
 		it should pull access id and key from environment
 		variables
 		"""
-		PynamoDB._session = boto3.Session(
+		cls._session = boto3.Session(
 			region_name="us-east-1"
 		)
-		PynamoDB._dynamodb = PynamoDB._session.resource("dynamodb") # type: ignore
+		cls._dynamodb = cls._session.resource("dynamodb") # type: ignore
+		if cls._session is None or cls._dynamodb is None: # type: ignore
+			raise Exception('Failed to connect database')
+		return
+	
+	@classmethod
+	def close_connection(cls):
+		cls._session = None
+		cls._dynamodb = None
+		print('pynamo reset')
 		return
 
-	@staticmethod
-	def _put_item(table_name: str, item: Dict[str, Any]) -> bool:
+	@classmethod
+	def _put_item(cls, table_name: str, item: Dict[str, Any]) -> bool:
 		"""
 		Puts an item in the given table or updates the item.
 		"""
-		table = PynamoDB._dynamodb.Table(table_name)
+		if cls._dynamodb is None:
+			raise Exception('Database not connected')
+		table = cls._dynamodb.Table(table_name)
 		try:
 			table.put_item(Item=item)
 			return True
@@ -39,12 +50,14 @@ class PynamoDB:
 			return False
 
 	# Get an item from the table
-	@staticmethod
-	def _get_item(table_name: str, key: str) -> Dict[str, Any] | None:
+	@classmethod
+	def _get_item(cls, table_name: str, key: str) -> Dict[str, Any] | None:
 		"""
 		Gets an item from the given table if present.
 		"""
-		table = PynamoDB._dynamodb.Table(table_name)
+		if cls._dynamodb is None:
+			raise Exception('Database not connected')
+		table = cls._dynamodb.Table(table_name)
 		try:
 			# presumes that the partition key is in the
 			# format of 'id': str
@@ -55,12 +68,14 @@ class PynamoDB:
 			print(e)
 			return None
 	
-	@staticmethod
-	def _scan_table(table_name: str) -> List[Dict[str, Any]]:
+	@classmethod
+	def _scan_table(cls, table_name: str) -> List[Dict[str, Any]]:
 		"""
 		Gets all items from the given table.
 		"""
-		table = PynamoDB._dynamodb.Table(table_name)
+		if cls._dynamodb is None:
+			raise Exception('Database not connected')
+		table = cls._dynamodb.Table(table_name)
 
 		response = table.scan()
 		items = response.get('Items', [])

@@ -10,10 +10,6 @@ from services.redirect_service import RedirectService
 from services.list_urls_service import ListUrlsService
 from dependency_injector.di import DI
 
-# TODO: fill in with the actual domain
-domain: str = 'domain.com'
-short_id_length: int = 6
-
 def create_app() -> FastAPI:
 	app = FastAPI()
 	app.include_router(list_urls.router)

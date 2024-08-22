@@ -7,11 +7,10 @@ from dependency_injector.di import DI
 from services.shorten_url_service import ShortenUrlService, InvalidUrlException
 import unittest
 
-from main import domain, short_id_length
+from settings import domain, short_id_length
 
 class TestUrlShortener(unittest.TestCase):
 	def setUp(self) -> None:
-		DI.reset()
 		DI(
 			list_urls_service=ListUrlsService(),
 			redirect_service=RedirectService(),
@@ -19,7 +18,13 @@ class TestUrlShortener(unittest.TestCase):
 			utils=Utilities(),
 			db=DB,
 		)
-		return super().setUp()
+		DB.connect()
+		return
+	
+	def tearDown(self) -> None:
+		DI.reset()
+		DB.close()
+		return
 
 	def test_valid_url_shortener(self):
 		original_url: str = 'http://original.com/long-url'

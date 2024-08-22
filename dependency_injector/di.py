@@ -11,11 +11,11 @@ from interfaces.list_urls_interface import IListUrls
 # This class will assign production defaults
 # if no services are provided
 class DI:
-	@staticmethod
-	def instance() -> 'DI':
-		if DI._instance is None:
+	@classmethod
+	def instance(cls) -> 'DI':
+		if cls._instance is None:
 			raise Exception("DI not initialized")
-		return DI._instance
+		return cls._instance
 
 	_instance: 'DI | None'
 
@@ -27,20 +27,18 @@ class DI:
 			utils: IUtilities,
 			db: Type[IDB],
 			) -> None:
-		if DI._instance is not None:
-			raise Exception('Singleton already initialized')
-		
 		self.list_urls_service: IListUrls = list_urls_service
 		self.redirect_service: IRedirect = redirect_service
 		self.shorten_url_service: IShortenUrl = shorten_url_service
 		self.utils: IUtilities = utils
 		self.db: Type[IDB] = db
+		DI._instance = self
 		return
 	
-	@staticmethod
-	def reset() -> None:
+	@classmethod
+	def reset(cls) -> None:
 		"""
 		This function should only be called by tests.
 		"""
-		DI._instance = None
+		cls._instance = None
 		return

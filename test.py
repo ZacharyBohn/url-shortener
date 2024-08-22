@@ -11,7 +11,7 @@ to run this file
 import unittest
 
 loader = unittest.TestLoader()
-integration_tests = loader.discover('tests', pattern='test_*.py')
+integration_tests = loader.discover('tests', pattern='test_all.py')
 # unit_tests = loader.discover('tests/unit_tests', pattern='test_*.py')
 
 # suite = unittest.TestSuite([integration_tests, unit_tests])

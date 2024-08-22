@@ -1,16 +1,17 @@
 from typing import List
 from pydantic import BaseModel
 
-from short_url_model import ShortUrlModel
+from models.short_url_model import ShortUrlModel
 
 class ShortUrlGroupModel(BaseModel):
 	id: str
-	url_pairs: List[ShortUrlModel]
+	url_pairs: List[ShortUrlModel] = []
 
-	def __init__(self, id: str, url_pairs: List[ShortUrlModel] = []) -> None:
-		self.id = id
-		self.url_pairs = url_pairs or []
-		return
+	# def __init__(self, id: str, url_pairs: List[ShortUrlModel] = []) -> None:
+	# 	super().__init__(id=id, url_pairs=url_pairs)
+	# 	self.id = id
+	# 	self.url_pairs = url_pairs or []
+	# 	return
 
 	def get_short_url_model(self, short_url_id: str) -> ShortUrlModel | None:
 		for short_url in self.url_pairs:

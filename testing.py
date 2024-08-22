@@ -1,18 +1,26 @@
-from typing import Type
+class MyClass:
+	class_variable: int | None =  None
 
-
-class This:
-	@staticmethod
-	def something() -> int:
-		return 55
-
-class DI:
-	def __init__(self) -> None:
-		self.this: Type[This] = This
+	@classmethod
+	def setup(cls):
+		cls.class_variable = 42
 		return
 
-di = DI()
-def something_else() -> int:
-	return 66
-di.this.something = something_else
-print(di.this.something())
+	@classmethod
+	def test(cls):
+		print(cls.class_variable)
+		return
+
+class ThirdClass:
+	testing: int = 99
+
+class SubClass(MyClass, ThirdClass):
+	subclass_variable: int = 9
+	@classmethod
+	def test2(cls):
+		print(cls.subclass_variable)
+		print(cls.class_variable)
+		return
+
+SubClass.setup()
+SubClass.test2()

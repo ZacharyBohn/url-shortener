@@ -4,7 +4,7 @@ from exceptions.exceptions import InvalidUrlException
 from interfaces.shorten_url_interface import IShortenUrl
 from interfaces.url_schemes import UrlScheme
 from interfaces.utilities_interface import IUtilities
-from main import domain, short_id_length
+from settings import domain, short_id_length
 
 
 class ShortenUrlService(IShortenUrl):

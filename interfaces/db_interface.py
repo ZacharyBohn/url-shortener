@@ -4,24 +4,30 @@ from typing import Optional
 from models.short_url_model import ShortUrlModel
 
 class IDB(ABC):
-	@staticmethod
+	@classmethod
 	@abstractmethod
-	def setup():
+	def connect(cls):
 		pass
 
-	@staticmethod
+	@classmethod
 	@abstractmethod
-	def get_all_urls() -> list[ShortUrlModel]:
+	def close(cls):
 		pass
 
-	@staticmethod
+	@classmethod
 	@abstractmethod
-	def get_short_url(short_url_id: str) -> ShortUrlModel | None:
+	def get_all_urls(cls) -> list[ShortUrlModel]:
 		pass
 
-	@staticmethod
+	@classmethod
+	@abstractmethod
+	def get_short_url(cls, short_url_id: str) -> ShortUrlModel | None:
+		pass
+
+	@classmethod
 	@abstractmethod
 	def create_short_url(
+		cls,
 		original_url: str,
 		short_url_id: Optional[str] = None,
 	) -> str:
