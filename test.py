@@ -12,8 +12,8 @@ import unittest
 
 loader = unittest.TestLoader()
 integration_tests = loader.discover('tests', pattern='test_all.py')
-# unit_tests = loader.discover('tests/unit_tests', pattern='test_*.py')
+unit_tests = loader.discover('tests/unit_tests', pattern='test_*.py')
 
-# suite = unittest.TestSuite([integration_tests, unit_tests])
+suite = unittest.TestSuite([integration_tests, unit_tests])
 
-unittest.TextTestRunner().run(integration_tests)
+unittest.TextTestRunner().run(suite)
