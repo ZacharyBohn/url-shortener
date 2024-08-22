@@ -1,6 +1,5 @@
 from moto import mock_aws
 from database.db import DB
-from exceptions.exceptions import UnavailableUrlException
 from services.redirect_service import RedirectService
 from services.list_urls_service import ListUrlsService
 from utils.utilities import Utilities
