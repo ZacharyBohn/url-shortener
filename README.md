@@ -38,7 +38,7 @@ or run it in production mode with
 
 You can run all the tests with
 
-`python tests.py`
+`python test.py`
 
 The only outside service needed to run the tests is AWS' dynamoDB.
 
