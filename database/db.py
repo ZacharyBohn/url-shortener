@@ -12,6 +12,7 @@ from settings import short_id_length
 
 class DB(IDB, PynamoDB):
 	_group_id_length: int = 8
+	shorten_urls_table_name: str = "shorten_urls"
 
 	@classmethod
 	def connect(cls):
@@ -29,7 +30,7 @@ class DB(IDB, PynamoDB):
 		Returns all url pairs in the db
 		"""
 		all_urls: List[ShortUrlModel] = []
-		for group in cls._scan_table('shorten_url'):
+		for group in cls._scan_table(cls.shorten_urls_table_name):
 			try:
 				group_model = ShortUrlGroupModel(**group)
 				for short_url in group_model.url_pairs:
@@ -71,7 +72,8 @@ class DB(IDB, PynamoDB):
 				original_url=original_url,
 			)
 		)
-		cls._save_url_group(group)
+		if not cls._save_url_group(group):
+			raise Exception('Failed to save item')
 		return short_url_id
 
 	@classmethod
@@ -112,7 +114,7 @@ class DB(IDB, PynamoDB):
 		Returns either the group associated with the group id
 		or None if it doesn't exist
 		"""
-		json = cls._get_item('shorten_urls', url_group_id)
+		json = cls._get_item(cls.shorten_urls_table_name, url_group_id)
 		if json is None: return None
 		try:
 			model = ShortUrlGroupModel(**json)
@@ -123,4 +125,8 @@ class DB(IDB, PynamoDB):
 	
 	@classmethod
 	def _save_url_group(cls, group: ShortUrlGroupModel) -> bool:
-		return cls._put_item('shorten_urls', group.model_dump())
+		return cls._put_item(cls.shorten_urls_table_name, group.model_dump())
+	
+	@classmethod
+	def create_table(cls, table_name: str) -> bool:
+		return cls._create_table(table_name)

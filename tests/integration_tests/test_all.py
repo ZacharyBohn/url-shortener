@@ -9,6 +9,7 @@ from database.db import DB
 # from schemas.redirect_response import RedirectResponse
 # from schemas.short_url_response import ShortUrlResponse
 # from schemas.error_response import ErrorReponse
+from schemas.short_url_response import ShortUrlResponse
 from services.shorten_url_service import ShortenUrlService
 from services.redirect_service import RedirectService
 from services.list_urls_service import ListUrlsService
@@ -17,47 +18,52 @@ from dependency_injector.di import DI
 from main import create_app
 from settings import domain, short_id_length
 
-
+@mock_aws
 class TestApis(unittest.TestCase):
 	def setUp(self) -> None:
-		DI(
+		di = DI(
 			list_urls_service=ListUrlsService(),
 			redirect_service=RedirectService(),
 			shorten_url_service=ShortenUrlService(),
 			utils=Utilities(),
 			db=DB,
 		)
-		DB.connect()
+		di.db.connect()
+		di.db.create_table(di.db.shorten_urls_table_name)
 		return
 	
 	def tearDown(self) -> None:
+		DI.instance().db.close()
 		DI.reset()
-		DB.close()
 		return
-
-	@mock_aws
+	
 	def test_shorten_url(self):
 		client = TestClient(create_app())
-		original_url: str = "http://otherdomain.com/link-to-my-page"
+		original_url: str = "https://otherdomain.com/link-to-my-page"
 		response: Response = client.post(
 			"/shorten_url",
 			params={
 				"url": original_url,
 			},
 		)
-		short_url_response = response.json()
+		self.assertEqual(response.status_code, 200)
+		short_url_response = ShortUrlResponse.model_validate(response.json())
 		# first part of the short url that should be generated
 		first_part = f"https://{domain}/"
 		# ensure the short id length is correct
 		first_part_len = len(first_part)
-		second_part = short_url_response[first_part_len:]
+		second_part = short_url_response.short_url[first_part_len:]
 		second_part_len = len(second_part)
 		self.assertEqual(second_part_len, short_id_length)
 		# ensure that the url was inserted into the db
-		self.assertEqual(DB.get_short_url(short_url_response), original_url)
+		db = DI.instance().db
+		db_short_url = db.get_short_url(second_part)
+		self.assertNotEqual(db_short_url, None)
+		if db_short_url is None: raise Exception() # just for typing
+		self.assertEqual(db_short_url.original_url, original_url)
 		return
 
-	# @mock_aws
+	# 
 	# def test_shorten_url_with_collisions(self):
 	# 	# monkey wrench the utility function to force collisions.
 	# 	# counter is used so that when it tries to regenerate a
@@ -96,7 +102,7 @@ class TestApis(unittest.TestCase):
 	# 	self.assertEqual(DB.get_short_url(short_url_response), original_url)
 	# 	return
 
-	# @mock_aws
+	# 
 	# def test_shorten_url_with_custom_url(self):
 	# 	client = TestClient(create_app())
 	# 	original_url: str = "http://other_domain.com/link-to-my-page"
@@ -119,7 +125,7 @@ class TestApis(unittest.TestCase):
 	# 	self.assertEqual(DB.get_short_url(short_url_response.short_url), original_url)
 	# 	return
 
-	# @mock_aws
+	# 
 	# def test_shorten_url_with_custom_url_and_collisions(self):
 	# 	client = TestClient(create_app())
 	# 	original_url: str = "http://other_domain.com/link-to-my-page"
@@ -136,7 +142,7 @@ class TestApis(unittest.TestCase):
 	# 	self.assertNotEqual(error.error, None)
 	# 	return
 
-	# @mock_aws
+	# 
 	# def test_shorten_url_invalid_custom_url(self):
 	# 	client = TestClient(create_app())
 	# 	original_url: str = "http://other_domain.com/link-to-my-page"
@@ -153,7 +159,7 @@ class TestApis(unittest.TestCase):
 	# 	self.assertNotEqual(error.error, None)
 	# 	return
 
-	# @mock_aws
+	# 
 	# def test_redirect(self):
 	# 	client = TestClient(create_app())
 	# 	original_url: str = "http://other_domain.com/link-to-my-page"
@@ -170,7 +176,7 @@ class TestApis(unittest.TestCase):
 	# 	self.assertEqual(redirect.original_url, original_url)
 	# 	return
 	
-	# @mock_aws
+	# 
 	# def test_redirect_fake_short_url(self):
 	# 	client = TestClient(create_app())
 	# 	short_url: str = f"https://{domain}/012345"
@@ -185,7 +191,7 @@ class TestApis(unittest.TestCase):
 	# 	self.assertNotEqual(error.error, None)
 	# 	return
 
-	# @mock_aws
+	# 
 	# def test_list_urls(self):
 	# 	client = TestClient(create_app())
 	# 	original_url_1: str = "http://other_domain.com/link-to-my-page"

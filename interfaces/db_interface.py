@@ -4,6 +4,8 @@ from typing import Optional
 from models.short_url_model import ShortUrlModel
 
 class IDB(ABC):
+	shorten_urls_table_name: str
+
 	@classmethod
 	@abstractmethod
 	def connect(cls):
@@ -31,4 +33,9 @@ class IDB(ABC):
 		original_url: str,
 		short_url_id: Optional[str] = None,
 	) -> str:
+		pass
+
+	@classmethod
+	@abstractmethod
+	def create_table(cls, table_name: str) -> bool:
 		pass

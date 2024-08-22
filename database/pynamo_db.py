@@ -86,3 +86,46 @@ class PynamoDB:
 			items.extend(response.get('Items', []))
 
 		return items
+	
+	@classmethod
+	def _create_table(
+		cls,
+		table_name: str,
+		read_capacity: int = 10,
+		write_capacity: int = 10,
+		) -> bool:
+		if cls._dynamodb is None:
+			raise Exception('Database not connected')
+			# check if the table already exists
+		try:
+			cls._dynamodb.Table(table_name).load()
+			return True
+		except:
+			# if it doesn't exist, an error will throw
+			# then, create the table
+			pass
+		try:
+			table = cls._dynamodb.create_table(
+				TableName=table_name,
+				KeySchema=[
+					{
+						'AttributeName': 'id',
+						'KeyType': 'HASH'
+					}
+				],
+				AttributeDefinitions=[
+					{
+						'AttributeName': 'id',
+						'AttributeType': 'S'
+					}
+				],
+				ProvisionedThroughput={
+					'ReadCapacityUnits': read_capacity,
+					'WriteCapacityUnits': write_capacity,
+				}
+			)
+			table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
+			return True
+		except Exception as e:
+			print(f'Failed to create table: {e}')
+			return False
