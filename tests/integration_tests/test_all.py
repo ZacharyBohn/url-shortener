@@ -3,18 +3,18 @@ from fastapi.testclient import TestClient
 from httpx import Response
 from moto import mock_aws
 
-from database.db import DB
-from schemas.list_urls_response import ListUrlsResponse
-from schemas.redirect_response import RedirectResponse
-from schemas.error_response import ErrorReponse
-from schemas.short_url_response import ShortUrlResponse
-from services.shorten_url_service import ShortenUrlService
-from services.redirect_service import RedirectService
-from services.list_urls_service import ListUrlsService
-from utils.utilities import Utilities
-from dependency_injector.di import DI
-from main import create_app
-from settings import domain, short_id_length
+from app.database.db import DB
+from app.schemas.list_urls_response import ListUrlsResponse
+from app.schemas.redirect_response import RedirectResponse
+from app.schemas.error_response import ErrorReponse
+from app.schemas.short_url_response import ShortUrlResponse
+from app.services.shorten_url_service import ShortenUrlService
+from app.services.redirect_service import RedirectService
+from app.services.list_urls_service import ListUrlsService
+from app.utils.utilities import Utilities
+from app.dependency_injector.di import DI
+from app.main import create_app
+from app.settings import domain, short_id_length
 
 @mock_aws
 class TestApis(unittest.TestCase):

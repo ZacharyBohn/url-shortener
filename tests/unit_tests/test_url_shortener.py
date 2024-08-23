@@ -1,13 +1,13 @@
-from moto import mock_aws
-from database.db import DB
-from services.redirect_service import RedirectService
-from services.list_urls_service import ListUrlsService
-from utils.utilities import Utilities
-from dependency_injector.di import DI
-from services.shorten_url_service import ShortenUrlService, InvalidUrlException
 import unittest
+from moto import mock_aws
 
-from settings import domain, short_id_length
+from app.database.db import DB
+from app.services.redirect_service import RedirectService
+from app.services.list_urls_service import ListUrlsService
+from app.utils.utilities import Utilities
+from app.dependency_injector.di import DI
+from app.services.shorten_url_service import ShortenUrlService, InvalidUrlException
+from app.settings import domain, short_id_length
 
 @mock_aws
 class TestUrlShortener(unittest.TestCase):
