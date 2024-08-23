@@ -3,7 +3,7 @@ from app.exceptions.exceptions import InvalidUrlException
 from app.interfaces.shorten_url_interface import IShortenUrl
 from app.interfaces.url_schemes import UrlScheme
 from app.interfaces.utilities_interface import IUtilities
-from app.settings import domain, short_id_length
+from settings import domain, short_id_length
 
 
 class ShortenUrlService(IShortenUrl):

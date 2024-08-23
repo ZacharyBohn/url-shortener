@@ -7,7 +7,7 @@ from app.dependency_injector.di import DI
 from app.interfaces.db_interface import IDB
 from app.models.short_url_model import ShortUrlModel
 from app.models.short_url_group_model import ShortUrlGroupModel
-from app.settings import short_id_length
+from settings import short_id_length
 
 
 class DB(IDB, PynamoDB):

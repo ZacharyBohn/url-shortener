@@ -13,8 +13,8 @@ from app.services.redirect_service import RedirectService
 from app.services.list_urls_service import ListUrlsService
 from app.utils.utilities import Utilities
 from app.dependency_injector.di import DI
-from app.main import create_app
-from app.settings import domain, short_id_length
+from main import create_app
+from settings import domain, short_id_length
 
 @mock_aws
 class TestApis(unittest.TestCase):

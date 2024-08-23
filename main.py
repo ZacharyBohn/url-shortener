@@ -21,12 +21,11 @@ def create_app() -> FastAPI:
 		return 'ok'
 	return app
 
-if __name__ == "__main__":
-	DI(
-		list_urls_service=ListUrlsService(),
-		redirect_service=RedirectService(),
-		shorten_url_service=ShortenUrlService(),
-		utils=Utilities(),
-		db=DB,
-	)
-	app = create_app()
+DI(
+	list_urls_service=ListUrlsService(),
+	redirect_service=RedirectService(),
+	shorten_url_service=ShortenUrlService(),
+	utils=Utilities(),
+	db=DB,
+)
+app = create_app()

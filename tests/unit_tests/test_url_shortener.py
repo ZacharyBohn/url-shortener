@@ -7,7 +7,7 @@ from app.services.list_urls_service import ListUrlsService
 from app.utils.utilities import Utilities
 from app.dependency_injector.di import DI
 from app.services.shorten_url_service import ShortenUrlService, InvalidUrlException
-from app.settings import domain, short_id_length
+from settings import domain, short_id_length
 
 @mock_aws
 class TestUrlShortener(unittest.TestCase):

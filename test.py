@@ -8,12 +8,13 @@ Test files must use unittest by
 Use the command: python tests.py
 to run this file
 """
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
+
 import unittest
 
 loader = unittest.TestLoader()
-integration_tests = loader.discover('tests', pattern='test_all.py')
-unit_tests = loader.discover('tests/unit_tests', pattern='test_*.py')
+tests = loader.discover('tests', pattern='test_*.py')
 
-suite = unittest.TestSuite([integration_tests, unit_tests])
-
-unittest.TextTestRunner().run(suite)
+unittest.TextTestRunner().run(tests)

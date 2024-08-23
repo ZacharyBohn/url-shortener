@@ -8,38 +8,56 @@ A system that will shorten long urls to shorter ones
 
 In the project folder run
 
-`python -m venv env`
-
 `env\Scripts\activate`
 
+activates the virtual environment.
+
 `pip install -r requirements.txt`
+
+installs requirements.
+
+`uvicorn main:app`
+
+launches the app.
+
+`curl localhost:8000/ping`
+
+tests an endpoint on the app. should return "ok".
 
 ### Linux / Macos
 
 In the project folder run
 
-`python -m venv env`
-
 `source env/bin/activate`
+
+activates the virtual environment.
 
 `pip install -r requirements.txt`
 
-### Running the application
+installs requirements.
+
+`uvicorn main:app`
+
+launches the app.
+
+`curl localhost:8000/ping`
+
+tests an endpoint on the app. should return "ok".
+
+## Running the application
 
 You can run the application in dev mode with
 
-`fastapi dev main.py`
+`uvicorn main:app --reload`
 
 or run it in production mode with
 
-`fastapi run`
+`uvicorn main:app`
 
-### Tests
+## Tests
 
 You can run all the tests with
 
 `python test.py`
-
-The only outside service needed to run the tests is AWS' dynamoDB.
 
 This service is mocked using moto, so all tests can be run locally.

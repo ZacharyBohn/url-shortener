@@ -1,7 +1,7 @@
 from app.dependency_injector.di import DI
 from app.interfaces.redirect_interface import IRedirect
 from app.models.short_url_model import ShortUrlModel
-from app.settings import short_id_length
+from settings import short_id_length
 
 class RedirectService(IRedirect):
 	def redirect(self, short_url: str) -> str | None:

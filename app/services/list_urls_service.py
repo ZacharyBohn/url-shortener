@@ -4,7 +4,7 @@ from app.interfaces.url_schemes import UrlScheme
 from app.models.short_url_model import ShortUrlModel
 from app.dependency_injector.di import DI
 from app.interfaces.list_urls_interface import IListUrls
-from app.settings import domain
+from settings import domain
 
 class ListUrlsService(IListUrls):
 	def list_urls(self) -> Dict[str, str]:
