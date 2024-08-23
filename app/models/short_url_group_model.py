@@ -1,7 +1,7 @@
 from typing import List
 from pydantic import BaseModel
 
-from models.short_url_model import ShortUrlModel
+from app.models.short_url_model import ShortUrlModel
 
 class ShortUrlGroupModel(BaseModel):
 	id: str

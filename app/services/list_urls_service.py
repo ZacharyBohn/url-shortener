@@ -1,11 +1,10 @@
 from typing import Dict, List
 
-from interfaces.url_schemes import UrlScheme
-from models.short_url_model import ShortUrlModel
-
-from dependency_injector.di import DI
-from interfaces.list_urls_interface import IListUrls
-from settings import domain
+from app.interfaces.url_schemes import UrlScheme
+from app.models.short_url_model import ShortUrlModel
+from app.dependency_injector.di import DI
+from app.interfaces.list_urls_interface import IListUrls
+from app.settings import domain
 
 class ListUrlsService(IListUrls):
 	def list_urls(self) -> Dict[str, str]:

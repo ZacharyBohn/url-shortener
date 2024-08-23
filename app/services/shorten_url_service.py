@@ -1,10 +1,9 @@
-from dependency_injector.di import DI
-
-from exceptions.exceptions import InvalidUrlException
-from interfaces.shorten_url_interface import IShortenUrl
-from interfaces.url_schemes import UrlScheme
-from interfaces.utilities_interface import IUtilities
-from settings import domain, short_id_length
+from app.dependency_injector.di import DI
+from app.exceptions.exceptions import InvalidUrlException
+from app.interfaces.shorten_url_interface import IShortenUrl
+from app.interfaces.url_schemes import UrlScheme
+from app.interfaces.utilities_interface import IUtilities
+from app.settings import domain, short_id_length
 
 
 class ShortenUrlService(IShortenUrl):

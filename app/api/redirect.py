@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Response
 
-from dependency_injector.di import DI
-from schemas.error_response import ErrorReponse
-from schemas.redirect_response import RedirectResponse
+from app.dependency_injector.di import DI
+from app.schemas.error_response import ErrorReponse
+from app.schemas.redirect_response import RedirectResponse
 
 router = APIRouter()
 

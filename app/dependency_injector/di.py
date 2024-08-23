@@ -1,9 +1,10 @@
 from typing import Type
-from interfaces.db_interface import IDB
-from interfaces.utilities_interface import IUtilities
-from interfaces.shorten_url_interface import IShortenUrl
-from interfaces.redirect_interface import IRedirect
-from interfaces.list_urls_interface import IListUrls
+
+from app.interfaces.db_interface import IDB
+from app.interfaces.utilities_interface import IUtilities
+from app.interfaces.shorten_url_interface import IShortenUrl
+from app.interfaces.redirect_interface import IRedirect
+from app.interfaces.list_urls_interface import IListUrls
 
 
 # Dependency injector

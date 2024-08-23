@@ -1,11 +1,11 @@
 from typing import Optional
 from fastapi import APIRouter, Response
 
-from interfaces.shorten_url_interface import IShortenUrl
-from services.shorten_url_service import InvalidUrlException
-from schemas.short_url_response import ShortUrlResponse
-from schemas.error_response import ErrorReponse
-from dependency_injector.di import DI
+from app.interfaces.shorten_url_interface import IShortenUrl
+from app.services.shorten_url_service import InvalidUrlException
+from app.schemas.short_url_response import ShortUrlResponse
+from app.schemas.error_response import ErrorReponse
+from app.dependency_injector.di import DI
 
 router = APIRouter()
 

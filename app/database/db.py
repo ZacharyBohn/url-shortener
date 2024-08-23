@@ -1,13 +1,13 @@
 from typing import List, Optional
 from pydantic import ValidationError
 
-from exceptions.exceptions import ShortUrlAlreadyExistsException
-from database.pynamo_db import PynamoDB
-from dependency_injector.di import DI
-from interfaces.db_interface import IDB
-from models.short_url_model import ShortUrlModel
-from models.short_url_group_model import ShortUrlGroupModel
-from settings import short_id_length
+from app.exceptions.exceptions import ShortUrlAlreadyExistsException
+from app.database.pynamo_db import PynamoDB
+from app.dependency_injector.di import DI
+from app.interfaces.db_interface import IDB
+from app.models.short_url_model import ShortUrlModel
+from app.models.short_url_group_model import ShortUrlGroupModel
+from app.settings import short_id_length
 
 
 class DB(IDB, PynamoDB):

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from interfaces.url_schemes import UrlScheme
+from app.interfaces.url_schemes import UrlScheme
 
 class IShortenUrl(ABC):
 	@abstractmethod

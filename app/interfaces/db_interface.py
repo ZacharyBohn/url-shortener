@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from models.short_url_model import ShortUrlModel
+from app.models.short_url_model import ShortUrlModel
 
 class IDB(ABC):
 	shorten_urls_table_name: str

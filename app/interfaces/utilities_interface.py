@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-
 from pydantic import PositiveInt
 
-from interfaces.url_schemes import UrlScheme
+from app.interfaces.url_schemes import UrlScheme
 
 class IUtilities(ABC):
 	@abstractmethod

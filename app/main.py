@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 
-from api import list_urls
-from api import redirect
-from api import shorten_url
-from database.db import DB
-from utils.utilities import Utilities
-from services.shorten_url_service import ShortenUrlService
-from services.redirect_service import RedirectService
-from services.list_urls_service import ListUrlsService
-from dependency_injector.di import DI
+from app.api import list_urls
+from app.api import redirect
+from app.api import shorten_url
+from app.database.db import DB
+from app.utils.utilities import Utilities
+from app.services.shorten_url_service import ShortenUrlService
+from app.services.redirect_service import RedirectService
+from app.services.list_urls_service import ListUrlsService
+from app.dependency_injector.di import DI
 
 def create_app() -> FastAPI:
 	app = FastAPI()

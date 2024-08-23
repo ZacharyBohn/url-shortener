@@ -1,9 +1,9 @@
 from typing import Dict
 from fastapi import APIRouter, Response
 
-from schemas.error_response import ErrorReponse
-from dependency_injector.di import DI
-from schemas.list_urls_response import ListUrlsResponse
+from app.schemas.error_response import ErrorReponse
+from app.dependency_injector.di import DI
+from app.schemas.list_urls_response import ListUrlsResponse
 
 router = APIRouter()
 

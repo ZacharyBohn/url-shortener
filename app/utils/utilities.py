@@ -3,8 +3,8 @@ import re
 from uuid import uuid4
 from pydantic import PositiveInt
 
-from interfaces.url_schemes import UrlScheme
-from interfaces.utilities_interface import IUtilities
+from app.interfaces.url_schemes import UrlScheme
+from app.interfaces.utilities_interface import IUtilities
 
 
 class Utilities(IUtilities):
