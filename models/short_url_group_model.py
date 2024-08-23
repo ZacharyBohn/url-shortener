@@ -7,12 +7,6 @@ class ShortUrlGroupModel(BaseModel):
 	id: str
 	url_pairs: List[ShortUrlModel] = []
 
-	# def __init__(self, id: str, url_pairs: List[ShortUrlModel] = []) -> None:
-	# 	super().__init__(id=id, url_pairs=url_pairs)
-	# 	self.id = id
-	# 	self.url_pairs = url_pairs or []
-	# 	return
-
 	def get_short_url_model(self, short_url_id: str) -> ShortUrlModel | None:
 		for short_url in self.url_pairs:
 			if short_url.id == short_url_id:
