@@ -41,7 +41,7 @@ class Utilities(IUtilities):
 		return url_pattern.match(url) != None
 	
 	def extract_short_url_id(self, short_url: str, id_length: int) -> str:
-		pattern = fr'(\d{{{id_length}}})$'
+		pattern = fr'(\w{{{id_length}}})$'
 		match = re.search(pattern, short_url)
 		if match:
 			return match.group(1)
