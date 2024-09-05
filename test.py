@@ -8,6 +8,13 @@ Test files must use unittest by
 Use the command: python tests.py
 to run this file
 """
+
+# This is necessary to set the correct path
+# when the tests are running. The path should be
+# the project root, but when the tests start normally
+# the path is the project folder, so imports don't work.
+#
+# This patches python so that imports will work across the app.
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
