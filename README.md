@@ -4,9 +4,27 @@ A system that will shorten long urls to shorter ones
 
 ## Getting started
 
+### Setting up the database
+
+Create a Dynamo database in AWS and name it `shorten_urls`
+
+[link to Dynamo](https://aws.amazon.com/dynamodb/)
+
+Then create two environment variables named on your machine
+
+`AWS_ACCESS_KEY_ID`
+
+`AWS_SECRET_ACCESS_KEY`
+
+and set their values to the values provided by AWS.
+
 ### Windows
 
 In the project folder run
+
+`python -m venv env`
+
+which creates a virtual environment
 
 `env\Scripts\activate`
 
@@ -14,7 +32,7 @@ activates the virtual environment.
 
 `pip install -r requirements.txt`
 
-installs requirements.
+installs requirements into the virutal environment.
 
 `uvicorn main:app`
 
@@ -27,6 +45,10 @@ tests an endpoint on the app. should return "ok".
 ### Linux / Macos
 
 In the project folder run
+
+`python -m venv env`
+
+which creates a virtual environment
 
 `source env/bin/activate`
 
