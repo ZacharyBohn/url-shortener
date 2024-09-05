@@ -83,3 +83,7 @@ You can run all the tests with
 `python test.py`
 
 This service is mocked using moto, so all tests can be run locally.
+
+## Examples
+
+Examples of curl commands to access this application can be [found here](EXAMPLES.md)
