@@ -28,4 +28,5 @@ DI(
 	utils=Utilities(),
 	db=DB,
 )
+DI.instance().db.connect()
 app = create_app()

@@ -9,8 +9,6 @@
 		"editor.formatOnType": true,
 		"editor.defaultFormatter": "ms-python.autopep8"
 	},
-	"autopep8.args": [
-		"aggressive=3",
-		"in-place=true"
-	]
+	"autopep8.args": ["aggressive=3", "in-place=true"],
+	"git.ignoreLimitWarning": true
 }
