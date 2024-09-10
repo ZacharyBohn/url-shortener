@@ -24,7 +24,9 @@ class PynamoDB:
 		)
 		cls._dynamodb = cls._session.resource("dynamodb") # type: ignore
 		if cls._session is None or cls._dynamodb is None: # type: ignore
-			raise Exception('Failed to connect database')
+			raise Exception("Failed to connect database")
+		else:
+			print("Connected to database")
 		return
 	
 	@classmethod
