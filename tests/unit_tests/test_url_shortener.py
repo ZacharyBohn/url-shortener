@@ -2,10 +2,12 @@ import unittest
 from moto import mock_aws
 
 from app.database.db import DB
+from app.interfaces.logger_interface import LogLevel
 from app.services.redirect_service import RedirectService
 from app.services.list_urls_service import ListUrlsService
 from app.utils.utilities import Utilities
 from app.dependency_injector.di import DI
+from app.utils.logger import Logger
 from app.services.shorten_url_service import ShortenUrlService, InvalidUrlException
 from settings import domain, short_id_length
 
@@ -18,7 +20,9 @@ class TestUrlShortener(unittest.TestCase):
 			shorten_url_service=ShortenUrlService(),
 			utils=Utilities(),
 			db=DB,
+			logger=Logger("tests"),
 		)
+		di.logger.setLogLevel(LogLevel.ERROR)
 		di.db.connect()
 		di.db.create_table(di.db.shorten_urls_table_name)
 		return

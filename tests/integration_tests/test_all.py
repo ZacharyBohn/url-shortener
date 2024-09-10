@@ -4,6 +4,7 @@ from httpx import Response
 from moto import mock_aws
 
 from app.database.db import DB
+from app.interfaces.logger_interface import LogLevel
 from app.schemas.list_urls_response import ListUrlsResponse
 from app.schemas.redirect_response import RedirectResponse
 from app.schemas.error_response import ErrorReponse
@@ -13,6 +14,7 @@ from app.services.redirect_service import RedirectService
 from app.services.list_urls_service import ListUrlsService
 from app.utils.utilities import Utilities
 from app.dependency_injector.di import DI
+from app.utils.logger import Logger
 from main import create_app
 from settings import domain, short_id_length
 
@@ -25,7 +27,9 @@ class TestApis(unittest.TestCase):
 			shorten_url_service=ShortenUrlService(),
 			utils=Utilities(),
 			db=DB,
+			logger=Logger("tests")
 		)
+		di.logger.setLogLevel(LogLevel.ERROR)
 		di.db.connect()
 		di.db.create_table(di.db.shorten_urls_table_name)
 		return

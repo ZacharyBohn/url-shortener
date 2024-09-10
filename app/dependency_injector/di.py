@@ -1,6 +1,7 @@
 from typing import Type
 
 from app.interfaces.db_interface import IDB
+from app.interfaces.logger_interface import ILogger
 from app.interfaces.utilities_interface import IUtilities
 from app.interfaces.shorten_url_interface import IShortenUrl
 from app.interfaces.redirect_interface import IRedirect
@@ -27,12 +28,14 @@ class DI:
 			shorten_url_service: IShortenUrl,
 			utils: IUtilities,
 			db: Type[IDB],
+			logger: ILogger,
 			) -> None:
 		self.list_urls_service: IListUrls = list_urls_service
 		self.redirect_service: IRedirect = redirect_service
 		self.shorten_url_service: IShortenUrl = shorten_url_service
 		self.utils: IUtilities = utils
 		self.db: Type[IDB] = db
+		self.logger: ILogger = logger
 		DI._instance = self
 		return
 	

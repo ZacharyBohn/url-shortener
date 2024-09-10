@@ -17,11 +17,13 @@ class DB(IDB, PynamoDB):
 	@classmethod
 	def connect(cls):
 		cls.open_connection()
+		DI.instance().logger.info("Database connected.")
 		return
 
 	@classmethod
 	def close(cls):
 		cls.close_connection()
+		DI.instance().logger.info("Database connection closed.")
 		return
 
 	@classmethod
@@ -36,7 +38,7 @@ class DB(IDB, PynamoDB):
 				for short_url in group_model.url_pairs:
 					all_urls.append(short_url)
 			except ValidationError as e:
-				print(f'Failed to validate db json data in DB.get_all_urls(): {e}')
+				DI.instance().logger.error(f'Failed to validate db json data in DB.get_all_urls(): {e}')
 		return all_urls
 
 	@classmethod
@@ -121,7 +123,7 @@ class DB(IDB, PynamoDB):
 			model = ShortUrlGroupModel(**json)
 			return model
 		except ValidationError as e:
-			print(f'Failed to convert url group model: {e}')
+			DI.instance().logger.error(f'Failed to convert url group model: {e}')
 			return None
 	
 	@classmethod
