@@ -14,6 +14,6 @@ def list_urls(response: Response):
 		short_urls: Dict[str, str] = list_urls_service.list_urls()
 		return ListUrlsResponse(short_urls=short_urls)
 	except Exception as e:
-		print(e)
+		DI.instance().logger.error(e)
 		response.status_code = 500
 		return ErrorReponse(error="Internal server error")

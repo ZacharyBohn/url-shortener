@@ -32,7 +32,7 @@ async def shorten_url(
 		response.status_code = 400
 		return ErrorReponse(error='Invalid custom URL')
 	except Exception as e:
-		print(e)
+		DI.instance().logger.error(e)
 		# 500 =
 		# internal server error
 		response.status_code = 500
