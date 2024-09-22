@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - release
+      - docker
   workflow_dispatch:
 
 jobs:
